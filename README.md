@@ -1,4 +1,4 @@
-<h1 align="center">gotree</p>
+<h1 align="center">gotree</h1>
 <p align="center">Terminal christmas tree in Go</p>
 
 <p align="center">
