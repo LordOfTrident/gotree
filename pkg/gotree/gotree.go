@@ -36,6 +36,10 @@ const (
 	AttrBrightWhite   = "\x1b[97m"
 )
 
+func Color256(id string) string {
+	return "\x1b[38;5;" + id + "m"
+}
+
 // Config
 var (
 	Width  = 19
@@ -43,25 +47,26 @@ var (
 
 	Offset = 1
 
-	LeafChar   = '*'
-	LeafAttr   = AttrGreen
-	LeafChance = 4
+	LeafCharRight = '>'
+	LeafCharLeft  = '<'
+	LeafAttr      = Color256("71")
+	LeafChance    = 4
 
-	LightBulbChar  = 'o'
+	LightBulbChars = []rune{'o', 'O'}
 	LightBulbAttr  = AttrBold
-	LightBulbAttrs = []string{AttrBrightRed,
-	                          AttrBrightGreen,
-	                          AttrBrightYellow,
-	                          AttrBrightBlue,
-	                          AttrBrightMagenta,
-	                          AttrBrightCyan,
-	                          AttrBrightWhite}
+	LightBulbAttrs = []string{
+		Color256("255"),
+		Color256("196"),
+		Color256("222"),
+		Color256("208"),
+		Color256("27"),
+	}
 
 	// Speed in ticks, a tick takes 60 miliseconds
 	LightsSpeed = 6
 
 	TrunkStr  = "wWw"
-	TrunkAttr = AttrBrightRed
+	TrunkAttr = Color256("130")
 	TrunkLen  = 2
 
 	StarChar = '&'
@@ -148,7 +153,7 @@ func renderTree() {
 	}
 
 	// Render the trunk
-	offset := Width / 2 - TrunkLen / 2 + Offset
+	offset := Width / 2 - len(TrunkStr) / 2 + Offset
 	out    := TrunkAttr + TrunkStr + AttrReset
 
 	for i := 0; i < TrunkLen; i ++ {
@@ -161,13 +166,31 @@ func renderLeafRow(width int) {
 
 	fmt.Print(strings.Repeat(" ", offset))
 
+	widthMod3 := width % 3 == 0
+	which     := widthMod3
+
 	for i := 0; i < width; i ++ {
 		if rand.Intn(LeafChance) == 1 { // Render a light bulb
 			attr := LightBulbAttr + LightBulbAttrs[rand.Intn(len(LightBulbAttrs))]
+			char := LightBulbChars[rand.Intn(len(LightBulbChars))]
 
-			fmt.Print(attr + string(LightBulbChar) + AttrReset)
+			fmt.Print(attr + string(char) + AttrReset)
 		} else { // Render a leaf
-			fmt.Print(LeafAttr + string(LeafChar) + AttrReset)
+			if which {
+				fmt.Print(LeafAttr + string(LeafCharRight) + AttrReset)
+			} else {
+				fmt.Print(LeafAttr + string(LeafCharLeft) + AttrReset)
+			}
+		}
+
+		if widthMod3 {
+			if i % 5 == 0 {
+				which = !which
+			}
+		} else {
+			if i % 4 == 0 {
+				which = !which
+			}
 		}
 	}
 

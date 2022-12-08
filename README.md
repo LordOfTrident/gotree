@@ -33,7 +33,9 @@ $ gotree
 ```
 
 ## Customization
-See `gotree -h` for a list of customization flags
+See `gotree -h` for a list of customization flags.
+If you want to customize more, you can edit the file [./pkg/gotree/gotree.go](./pkg/gotree/gotree.go) config section
+and recompile the program.
 
 ## Bugs
 If you find any bugs, please create an issue and report them.
